@@ -40,6 +40,7 @@
             <p class="text-gray-400 mb-4">Upload an audio file or record in real-time.</p>
             <div class="space-y-4">
                 <input type="file" id="audioUpload" accept="audio/*" class="block w-full text-gray-300 bg-gray-700 p-2 rounded-lg" aria-label="Upload audio file" />
+                <button id="analyzeButton" class="bg-green-600 text-white px-4 py-2 rounded-lg w-full" aria-label="Analyze audio">Analyze Audio</button>
                 <button id="recordButton" class="bg-blue-600 text-white px-4 py-2 rounded-lg w-full" aria-label="Start recording audio">Start Recording</button>
                 <button id="stopButton" class="bg-red-600 text-white px-4 py-2 rounded-lg w-full hidden" aria-label="Stop recording audio">Stop Recording</button>
                 <audio id="audioPreview" controls class="w-full hidden" aria-label="Audio playback preview"></audio>
@@ -53,7 +54,7 @@
         <div class="bg-gray-800 p-6 rounded-lg shadow-lg col-span-1">
             <h2 class="text-xl text-white font-semibold">Engagement Levels</h2>
             <div class="chart-container">
-                <canvas id="engagementLevelsChart" class="w-full mt-4"></canvas>
+                <canvas id="engagementChart"></canvas>
             </div>
         </div>
 
@@ -85,11 +86,11 @@
 
     <script>
         // Chart.js Setup
-        const engagementLevelsCtx = document.getElementById('engagementLevelsChart').getContext('2d');
+        const engagementCtx = document.getElementById('engagementChart').getContext('2d');
         const overallEngagementCtx = document.getElementById('overallEngagementChart').getContext('2d');
         const engagementTrendsCtx = document.getElementById('engagementTrendsChart').getContext('2d');
 
-        const engagementLevelsChart = new Chart(engagementLevelsCtx, {
+        const engagementChart = new Chart(engagementCtx, {
             type: 'radar',
             data: {
                 labels: ['Physical', 'Emotional', 'Mental', 'Spiritual'],
@@ -155,6 +156,7 @@
         // Audio Recording & Real-Time Progress Indicator
         let mediaRecorder;
         const audioChunks = [];
+        const analyzeButton = document.getElementById('analyzeButton');
         const recordButton = document.getElementById('recordButton');
         const stopButton = document.getElementById('stopButton');
         const audioPreview = document.getElementById('audioPreview');
@@ -197,10 +199,14 @@
             mediaRecorder.stop();
         });
 
+        analyzeButton.addEventListener('click', () => {
+            alert('Audio analysis functionality coming soon!');
+        });
+
         // Update charts dynamically (example placeholders)
         function updateCharts(data) {
-            engagementLevelsChart.data.datasets[0].data = data.levels;
-            engagementLevelsChart.update();
+            engagementChart.data.datasets[0].data = data.levels;
+            engagementChart.update();
 
             overallEngagementChart.data.datasets[0].data = data.overall;
             overallEngagementChart.update();
