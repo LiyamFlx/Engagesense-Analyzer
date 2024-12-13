@@ -1,18 +1,33 @@
+:root {
+    --background-color: #121212;
+    --text-color: #e0e0e0;
+    --font-family: 'Roboto', sans-serif;
+    --highlight-color: #3b82f6;
+    --button-hover-bg: #2563eb;
+    --scrollbar-width: 8px;
+    --scrollbar-thumb-bg: #4a5568;
+    --scrollbar-thumb-radius: 4px;
+}
+
 body {
-    background-color: #121212;
-    color: #e0e0e0;
-    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: var(--font-family);
 }
+
 .custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
+    width: var(--scrollbar-width);
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #4a5568;
-    border-radius: 4px;
+    background: var(--scrollbar-thumb-bg);
+    border-radius: var(--scrollbar-thumb-radius);
 }
+
 .highlight {
-    color: #3b82f6;
+    color: var(--highlight-color);
 }
+
 button:hover {
-    background-color: #2563eb;
+    background-color: var(--button-hover-bg);
 }
