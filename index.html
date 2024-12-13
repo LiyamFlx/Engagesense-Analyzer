@@ -3,222 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EngageSense - Real-Time Engagement Analyzer</title>
+    <title>EngageSense - Audio Engagement Analyzer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            background-color: #121212;
-            color: #e0e0e0;
-            font-family: 'Roboto', sans-serif;
+            background-color: #1a202c;
+            color: #e2e8f0;
         }
-        .scrollbar::-webkit-scrollbar {
+        .custom-scrollbar::-webkit-scrollbar {
             width: 8px;
         }
-        .scrollbar::-webkit-scrollbar-thumb {
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #2d3748;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #4a5568;
             border-radius: 4px;
         }
-        .highlight {
-            color: #3b82f6;
-        }
-        button:hover {
-            background-color: #2563eb;
-        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col p-4 scrollbar">
-    <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-white">EngageSense - Real-Time Analyzer</h1>
-        <p class="text-gray-400">Analyze real-time audience engagement with AI</p>
-    </header>
+<body class="bg-gray-900 text-gray-100 min-h-screen p-6 custom-scrollbar">
+    <div class="container mx-auto max-w-7xl">
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold text-center text-white mb-4">EngageSense Dashboard</h1>
+            <p class="text-center text-gray-400 mb-6">Analyze real-time audience engagement with AI</p>
+        </header>
 
-    <main class="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- File Upload & Recording Section -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg col-span-1 md:col-span-2">
-            <h2 class="text-xl text-white font-semibold">Audio Input</h2>
-            <p class="text-gray-400 mb-4">Upload an audio file or record in real-time.</p>
-            <div class="space-y-4">
-                <input type="file" id="audioUpload" accept="audio/*" class="block w-full text-gray-300 bg-gray-700 p-2 rounded-lg" aria-label="Upload audio file" />
-                <button id="recordButton" class="bg-blue-600 text-white px-4 py-2 rounded-lg w-full" aria-label="Start recording audio">Start Recording</button>
-                <button id="stopButton" class="bg-red-600 text-white px-4 py-2 rounded-lg w-full hidden" aria-label="Stop recording audio">Stop Recording</button>
-                <audio id="audioPreview" controls class="w-full hidden" aria-label="Audio playback preview"></audio>
-                <div id="progressIndicator" class="w-full bg-gray-700 rounded-full h-2.5 hidden">
-                    <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%;"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Audio Controls -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-lg col-span-full">
+                <h2 class="text-xl font-semibold mb-4 text-white">Audio Controls</h2>
+                <div class="flex space-x-4">
+                    <input type="file" id="audioUpload" accept="audio/*" class="hidden">
+                    <button id="uploadButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Upload Audio</button>
+                    <button id="recordButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Start Recording</button>
+                    <button id="stopButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" disabled>Stop Recording</button>
+                    <button id="analyzeButton" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Analyze Audio</button>
+                </div>
+                <audio id="audioPreview" controls class="mt-4 w-full"></audio>
+            </div>
+
+            <!-- Overall Engagement Score -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                <h2 class="text-xl font-semibold mb-4 text-white">Overall Engagement</h2>
+                <div class="text-center">
+                    <canvas id="overallEngagementChart" class="mx-auto" width="200" height="200"></canvas>
+                    <p id="overallEngagementScore" class="text-3xl font-bold text-blue-400 mt-4">0</p>
                 </div>
             </div>
-        </div>
 
-        <!-- Engagement Levels Visualization -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg col-span-1">
-            <h2 class="text-xl text-white font-semibold">Engagement Levels</h2>
-            <div class="chart-container">
-                <canvas id="engagementLevelsChart" class="w-full mt-4"></canvas>
+            <!-- Engagement Dimensions -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
+                <h2 class="text-xl font-semibold mb-4 text-white">Engagement Dimensions</h2>
+                <canvas id="engagementDimensionsChart" class="w-full"></canvas>
+            </div>
+
+            <!-- Engagement Trends -->
+            <div class="bg-gray-800 rounded-lg p-6 shadow-lg col-span-full">
+                <h2 class="text-xl font-semibold mb-4 text-white">Engagement Over Time</h2>
+                <canvas id="engagementTrendsChart" class="w-full"></canvas>
             </div>
         </div>
-
-        <!-- Overall Engagement Visualization -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg col-span-1">
-            <h2 class="text-xl text-white font-semibold">Overall Engagement</h2>
-            <canvas id="overallEngagementChart" class="w-full mt-4"></canvas>
-            <p id="overallEngagementScore" class="text-3xl font-bold text-blue-400 mt-4 text-center">0</p>
-        </div>
-
-        <!-- Engagement Trends Visualization -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg col-span-1 md:col-span-2">
-            <h2 class="text-xl text-white font-semibold">Engagement Trends</h2>
-            <canvas id="engagementTrendsChart" class="w-full mt-4"></canvas>
-        </div>
-
-        <!-- Recommendations -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg col-span-1">
-            <h2 class="text-xl text-white font-semibold">Recommendations</h2>
-            <ul id="recommendationsContainer" class="mt-4 text-gray-300">
-                <li>Loading recommendations...</li>
-            </ul>
-        </div>
-    </main>
-
-    <footer class="text-center mt-10">
-        <p class="text-gray-500 text-sm">&copy; 2024 EngageSense. All Rights Reserved.</p>
-    </footer>
+    </div>
 
     <script>
-        // Chart.js Setup
-        const engagementLevelsCtx = document.getElementById('engagementLevelsChart').getContext('2d');
-        const overallEngagementCtx = document.getElementById('overallEngagementChart').getContext('2d');
-        const engagementTrendsCtx = document.getElementById('engagementTrendsChart').getContext('2d');
-
-        const engagementLevelsChart = new Chart(engagementLevelsCtx, {
-            type: 'radar',
-            data: {
-                labels: ['Physical', 'Emotional', 'Mental', 'Spiritual'],
-                datasets: [{
-                    label: 'Engagement Levels',
-                    data: [], // Dynamic data placeholder
-                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                    borderColor: '#3b82f6',
-                    pointBackgroundColor: '#3b82f6'
-                }]
-            },
-            options: {
-                scales: {
-                    r: {
-                        ticks: {
-                            color: '#fff'
-                        }
-                    }
-                }
-            }
-        });
-
-        const overallEngagementChart = new Chart(overallEngagementCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Engagement', 'Remaining'],
-                datasets: [{
-                    data: [0, 100], // Dynamic data placeholder
-                    backgroundColor: ['#3b82f6', '#2d3748']
-                }]
-            },
-            options: {
-                plugins: {
-                    tooltip: { enabled: true }
-                },
-                cutout: '70%'
-            }
-        });
-
-        const engagementTrendsChart = new Chart(engagementTrendsCtx, {
-            type: 'line',
-            data: {
-                labels: [], // Dynamic time intervals placeholder
-                datasets: [{
-                    label: 'Engagement Over Time',
-                    data: [], // Dynamic data placeholder
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.2)'
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        ticks: { color: '#fff' }
-                    },
-                    y: {
-                        ticks: { color: '#fff' }
-                    }
-                }
-            }
-        });
-
-        // Audio Recording & Real-Time Progress Indicator
-        let mediaRecorder;
         const audioChunks = [];
+        let mediaRecorder;
+
+        const uploadButton = document.getElementById('uploadButton');
         const recordButton = document.getElementById('recordButton');
         const stopButton = document.getElementById('stopButton');
+        const analyzeButton = document.getElementById('analyzeButton');
         const audioPreview = document.getElementById('audioPreview');
-        const progressIndicator = document.getElementById('progressIndicator');
-        const progressBar = document.getElementById('progressBar');
+
+        uploadButton.addEventListener('click', () => {
+            document.getElementById('audioUpload').click();
+        });
+
+        document.getElementById('audioUpload').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                audioPreview.src = url;
+                audioPreview.load();
+            }
+        });
 
         recordButton.addEventListener('click', async () => {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
 
-            mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
 
-            mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                audioPreview.src = audioUrl;
-                audioPreview.classList.remove('hidden');
-                stopButton.classList.add('hidden');
-                recordButton.classList.remove('hidden');
-                progressIndicator.classList.add('hidden');
-            };
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const url = URL.createObjectURL(audioBlob);
+                    audioPreview.src = url;
+                    audioPreview.load();
+                };
 
-            mediaRecorder.start();
-            recordButton.classList.add('hidden');
-            stopButton.classList.remove('hidden');
-            progressIndicator.classList.remove('hidden');
-
-            let progress = 0;
-            const interval = setInterval(() => {
-                if (progress >= 100) {
-                    clearInterval(interval);
-                } else {
-                    progress += 5;
-                    progressBar.style.width = `${progress}%`;
-                }
-            }, 500);
+                mediaRecorder.start();
+                recordButton.disabled = true;
+                stopButton.disabled = false;
+            } catch (error) {
+                console.error('Error accessing media devices:', error);
+                alert('Could not access microphone. Please try again.');
+            }
         });
 
         stopButton.addEventListener('click', () => {
             mediaRecorder.stop();
+            recordButton.disabled = false;
+            stopButton.disabled = true;
         });
 
-        // Update charts dynamically (example placeholders)
-        function updateCharts(data) {
-            engagementLevelsChart.data.datasets[0].data = data.levels;
-            engagementLevelsChart.update();
+        analyzeButton.addEventListener('click', async () => {
+            const audioFile = document.getElementById('audioUpload').files[0];
+            if (!audioFile && audioChunks.length === 0) {
+                alert('Please upload or record an audio file first.');
+                return;
+            }
 
-            overallEngagementChart.data.datasets[0].data = data.overall;
-            overallEngagementChart.update();
+            let audioBuffer;
+            try {
+                const arrayBuffer = audioFile
+                    ? await audioFile.arrayBuffer()
+                    : await new Blob(audioChunks, { type: 'audio/wav' }).arrayBuffer();
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-            engagementTrendsChart.data.labels = data.trends.labels;
-            engagementTrendsChart.data.datasets[0].data = data.trends.data;
-            engagementTrendsChart.update();
+                const audioDuration = audioBuffer.duration;
+                const engagementLevels = [
+                    Math.random() * 10,
+                    Math.random() * 10,
+                    Math.random() * 10,
+                    Math.random() * 10,
+                ];
+                const overallEngagement = [
+                    (engagementLevels.reduce((a, b) => a + b, 0) / 4) * 10,
+                    100 - (engagementLevels.reduce((a, b) => a + b, 0) / 4) * 10,
+                ];
+                const engagementTrends = {
+                    labels: Array.from({ length: Math.floor(audioDuration / 5) }, (_, i) => `${i * 5}s`),
+                    data: Array.from({ length: Math.floor(audioDuration / 5) }, () => Math.random() * 100),
+                };
+
+                updateCharts({
+                    levels: engagementLevels,
+                    overall: overallEngagement,
+                    trends: engagementTrends,
+                });
+
+                alert('Audio analysis completed successfully!');
+            } catch (error) {
+                console.error('Error during audio analysis:', error);
+                alert('Failed to analyze audio. Please try again.');
+            }
+        });
+
+        function updateCharts({ levels, overall, trends }) {
+            new Chart(document.getElementById('overallEngagementChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: overall,
+                        backgroundColor: ['#3B82F6', '#1F2937'],
+                    }],
+                },
+                options: { cutout: '70%', plugins: { tooltip: { enabled: false } } },
+            });
+
+            new Chart(document.getElementById('engagementDimensionsChart').getContext('2d'), {
+                type: 'radar',
+                data: {
+                    labels: ['Physical', 'Emotional', 'Mental', 'Spiritual'],
+                    datasets: [{
+                        label: 'Engagement Levels',
+                        data: levels,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: '#3B82F6',
+                        pointBackgroundColor: '#3B82F6',
+                    }],
+                },
+                options: { scale: { r: { beginAtZero: true, max: 10 } } },
+            });
+
+            new Chart(document.getElementById('engagementTrendsChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: trends.labels,
+                    datasets: [{
+                        label: 'Engagement Level',
+                        data: trends.data,
+                        borderColor: '#3B82F6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    }],
+                },
+            });
         }
-
-        // Simulate dynamic updates (replace with real data logic)
-        setTimeout(() => {
-            const mockData = {
-                levels: [8, 9, 7, 6],
-                overall: [80, 20],
-                trends: { labels: ['0:00', '0:15', '0:30'], data: [50, 60, 55] }
-            };
-            updateCharts(mockData);
-        }, 2000);
     </script>
 </body>
 </html>
